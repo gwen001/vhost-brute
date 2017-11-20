@@ -12,7 +12,7 @@ Options:
 	--ip		set server ip address
 	--port		set port
 	--ssl		force ssl
-	--threads	set maximum threads, default 1
+	--threads	set maximum threads, default=1
 	--wordlist	set plain text file that contains subdomains to test
 
 Examples:
