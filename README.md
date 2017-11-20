@@ -19,6 +19,9 @@ Examples:
 	php vhost-discover.php --domain=example.com --wordlist=sub.txt --threads=5
 ```
 
+<img src="https://raw.githubusercontent.com/gwen001/vhost-brute/master/example.jpg" alt="Virtual Host Brute Force example">
+<br><br>
+
 I don't believe in license.  
 You can do want you want with this program.  
 
