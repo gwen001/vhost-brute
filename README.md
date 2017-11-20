@@ -1,10 +1,8 @@
-# github-search
-PHP tool to perform basic search on GitHub.  
-Cookie session is mandatory if you don't provide organization name (GitHub requirement).  
-Note that the search engine is case insensitive.  
+# vhost-brute
+A PHP tool to brute force vhost configured on a server.  
 
 ```
-Usage: php github-search.php [OPTIONS]
+Usage: php vhost-brute.php [OPTIONS]
 
 Options:
 	--domain	set domain
@@ -16,7 +14,7 @@ Options:
 	--wordlist	set plain text file that contains subdomains to test
 
 Examples:
-	php vhost-discover.php --domain=example.com --wordlist=sub.txt --threads=5
+	php vhost-brute.php --domain=example.com --wordlist=sub.txt --threads=5
 ```
 
 <img src="https://raw.githubusercontent.com/gwen001/vhost-brute/master/example.jpg" alt="Virtual Host Brute Force example">
