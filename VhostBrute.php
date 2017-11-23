@@ -203,9 +203,7 @@ class VhostBrute
 	
 	private function printResult( $host, $request, $compare=false )
 	{
-		$color = 'white';
 		$output = $host;
-		
 		$output .= "\t\tC=".$request->getResultCode();
 		$output .= "\t\tL=".$request->getResultBodySize();
 		//$output .= "\t\tH:";
@@ -215,6 +213,10 @@ class VhostBrute
 
 		if( $request->getResultBodySize() != $this->reference->getResultBodySize() || $diff_header ) {
 			$color = 'yellow';
+			$output .= "\t\tWARNING";
+		} else {
+			$color = 'white';
+			$output .= "\t\tNOTHING";
 		}
 		
 		Utils::_println( $output, $color );

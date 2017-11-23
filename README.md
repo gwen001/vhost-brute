@@ -14,7 +14,7 @@ Options:
 	--wordlist	set plain text file that contains subdomains to test
 
 Examples:
-	php vhost-brute.php --domain=example.com --wordlist=sub.txt --threads=5
+	php vhost-brute.php --ip=xxx.xxx.xxx.xxx --domain=example.com --wordlist=sub.txt --threads=5
 ```
 
 <img src="https://raw.githubusercontent.com/gwen001/vhost-brute/master/example.jpg" alt="Virtual Host Brute Force example">
