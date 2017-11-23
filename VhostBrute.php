@@ -219,7 +219,8 @@ class VhostBrute
 			$output .= "\t\tNOTHING";
 		}
 		
-		Utils::_println( $output, $color );
+		Utils::_println( $output, 
+		$color );
 
 		if( $diff_header ) {
 			foreach( $t_compare[3] as $k=>$v ) {
