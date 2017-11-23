@@ -6,6 +6,7 @@ Usage: php vhost-brute.php [OPTIONS]
 
 Options:
 	--domain	set domain
+	--fail		max fail (http code=0) before exiting, default=-1, unlimited
 	-h, --help	print this help
 	--ip		set server ip address
 	--port		set port

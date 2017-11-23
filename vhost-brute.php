@@ -34,6 +34,10 @@ function __autoload( $c ) {
 				$vbrute->setDomain( $v );
 				break;
 
+			case 'fail':
+				$vbrute->setMaxFail( $v );
+				break;
+				
 			case '-h':
 			case 'help':
 				Utils::help();

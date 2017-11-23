@@ -90,8 +90,10 @@ class HttpRequest
 				}
 				$v = trim( $v );
 				$tmp = explode( ':', $v );
-				$key = array_shift( $tmp );
-				$t_headers[ $key ] = trim( implode( ':', $tmp ) );
+				$key = trim( array_shift($tmp) );
+				if( $key != '' && !stristr($key,'HTTP/') ) {
+					$t_headers[ $key ] = trim( implode( ':', $tmp ) );
+				}
 			}
 			return $t_headers;
 		} else {
@@ -578,6 +580,7 @@ class HttpRequest
 		$this->result_header_size = $this->result_info['header_size'];
 		$this->result_length = strlen($this->result);
 		$this->result_body_size = $this->result_length - $this->result_header_size;
+		$this->result_body_size = ($this->result_body_size<0) ? 0 : $this->result_body_size;
 		$this->result_header = trim( substr( $this->result, 0, $this->result_header_size ) );
 		$this->result_body = trim( substr( $this->result, $this->result_header_size ) );
 		//var_dump( $this->result );

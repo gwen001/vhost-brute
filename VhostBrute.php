@@ -33,6 +33,19 @@ class VhostBrute
 		return true;
 	}
 
+	
+	private $n_fail = 0;
+	private $max_fail = -1;
+
+	public function getMaxFail() {
+		return $this->fail;
+	}
+	public function setMaxFail( $v ) {
+		$this->max_fail = (int)$v;
+		return true;
+	}
+
+	
 	private $port = null;
 
 	public function getPort() {
@@ -95,6 +108,7 @@ class VhostBrute
 		echo "Wordlist: ".$this->wordlist."\n";
 		echo "Count: ".$this->n_words."\n";
 		echo "Threads: ".$this->max_child."\n";
+		echo "Max fail: ".$this->max_fail." ".(($this->max_fail<0)?'(unlimited)':'')."\n";
 		echo str_pad( '', 100, '-' )."\n\n";
 	}
 	
@@ -126,10 +140,16 @@ class VhostBrute
 		//echo str_pad( '', 100, '-' )."\n";
 		$this->reference = $this->doRequest( '' );
 		$this->printResult( $this->ip, $this->reference );
+		
+		if( $this->reference->getResultCode() == 0 ) {
+			echo "\nIP seems to be KO, exiting...\n";
+			exit();
+		}
+		
 		//$this->reference_random = $this->doRequest( ($h=uniqid('')) );
 		//$this->printResult( $h, $this->reference_random );
-		//$this->reference_random_domain = $this->doRequest( ($h=uniqid('').'.'.$this->domain) );
-		//$this->printResult( $h, $this->reference_random_domain );
+		$this->reference_random_domain = $this->doRequest( ($h=uniqid('').'.'.$this->domain) );
+		$this->printResult( $h, $this->reference_random_domain );
 		echo "\n".str_pad( '', 100, '-' )."\n\n";
 		//echo str_pad( '', 100, '-' )."\n\n";
 		//exit();
@@ -175,8 +195,17 @@ class VhostBrute
 			ob_start();
 			$host = $w . '.' . $this->domain;
 			$request = $this->doRequest( $host );
+			
+			if( $request->getResultCode() == 0 ) {
+				$this->n_fail++;
+				if( $this->n_fail >= $this->max_fail ) {
+					echo "\nToo many KOs ".$this->n_fail.", exiting...\n";
+					exit();
+				}
+			}
+			
 			//var_dump( $request->getResultHeader() );
-			$this->printResult( $host, $request );
+			$this->printResult( $host, $request, true );
 			$result = ob_get_contents();
 			ob_end_clean();
 			echo $result;
@@ -187,6 +216,7 @@ class VhostBrute
 	private function doRequest( $host )
 	{
 		$request = new HttpRequest();
+		//$request->setRedirect( false );
 		$request->setSsl( $this->ssl );
 		$request->setUrl( $this->ip );
 		if( $host != '' ) {
@@ -203,25 +233,40 @@ class VhostBrute
 	
 	private function printResult( $host, $request, $compare=false )
 	{
+		$color = 'white';
+
 		$output = $host;
 		$output .= "\t\tC=".$request->getResultCode();
 		$output .= "\t\tL=".$request->getResultBodySize();
 		//$output .= "\t\tH:";
 
-		$t_compare = null;
-		$diff_header = $this->compareHeaders( $this->reference, $request, $t_compare );
-
+		if( !$compare ) {
+			Utils::_println( $output, $color );
+			return ;
+		}
+		
+		$diff_header = null;
+		if( $request->getResultCode() ) {
+			$t_compare = null;
+			$diff_header = $this->compareHeaders( $this->reference, $request, $t_compare );
+		}
+		
 		if( $request->getResultBodySize() != $this->reference->getResultBodySize() || $diff_header ) {
 			$color = 'yellow';
 			$output .= "\t\tWARNING";
 		} else {
-			$color = 'white';
-			$output .= "\t\tNOTHING";
+			if( $request->getResultCode() ) {
+				$color = 'white';
+				$output .= "\t\tNOTHING";
+			} else {
+				$color = 'light_grey';
+				$output .= "\t\tKO";
+			}				
 		}
 		
 		Utils::_println( $output, $color );
 
-		if( $diff_header ) {
+		if( $diff_header && $request->getResultCode() ) {
 			foreach( $t_compare[3] as $k=>$v ) {
 				Utils::_println( "\t= ".$k.': '.$v, 'light_grey' );
 			}
@@ -242,17 +287,24 @@ class VhostBrute
 	{
 		$h1 = $reference->getResultHeader();
 		$h2 = $request->getResultHeader();
-		$t_compare = [ 0=>[], 1=>[], 2=>[] ];
+		$t_compare = [ 0=>[], 1=>[], 2=>[], 3=>[] ];
+		
+		// 0 deleted headers
+		// 1 extra headers
+		// 2 altered headers
+		// 3 same headers
 		
 		unset( $h1['Date'] );
 		unset( $h2['Date'] );
+		unset( $h1['Location'] );
+		unset( $h2['Location'] );
 		
 		$t_compare[0] = array_diff_key( $h1, $h2 );
 		$t_compare[1] = array_diff_key( $h2, $h1 );
 		
 		foreach( $h1 as $k=>$v ) {
 			if( isset($h2[$k]) ) {
-				if( $h1[$k]!=$h2[$k] ) {
+				if( $h1[$k] != $h2[$k] ) {
 					$t_compare[2][$k] = $h1[$k] . '  ->  ' . $h2[$k];
 				} else {
 					$t_compare[3][$k] = $v;
