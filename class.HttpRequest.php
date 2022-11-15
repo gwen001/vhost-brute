@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class HttpRequest
@@ -43,9 +42,9 @@ class HttpRequest
 	public $cookie_file = '';
 
 	public $get_params = [];
-	
+
 	public $post_params = [];
-	
+
 	public $fragment = '';
 
 	public $multipart = false;
@@ -240,7 +239,7 @@ class HttpRequest
 		}
 		return $url;
 	}
-	
+
 
 	public function getMethod() {
 		return $this->method;
@@ -306,7 +305,7 @@ class HttpRequest
 		}
 		return $tab;
 	}
-	
+
 
 	public function getCookieTable()
 	{
@@ -355,11 +354,11 @@ class HttpRequest
 	{
 		$tab = [];
 		$cookies = trim( $cookies );
-		
+
 		if( strlen($cookies) )
 		{
 			$t_params = explode( ';', $cookies );
-			
+
 			foreach( $t_params as $p ) {
 				$tmp = explode( '=', $p );
 				$k = $tmp[0];
@@ -367,13 +366,13 @@ class HttpRequest
 				$tab[ trim($k) ] = trim($v);
 			}
 		}
-		
+
 		return $tab;
 	}
 	public function implodeCookies()
 	{
 		$str = '';
-		
+
 		if( is_array($this->cookies) && count($this->cookies) ) {
 			foreach( $this->cookies as $k=>$v ) {
 				$str .= $k.'='.$v.'; ';
@@ -434,7 +433,7 @@ class HttpRequest
 		if( strlen($get) )
 		{
 			$t_params = explode( '&', $get );
-			
+
 			foreach( $t_params as $p ) {
 				$tmp = explode( '=', $p );
 				$k = $tmp[0];
@@ -442,13 +441,13 @@ class HttpRequest
 				$tab[ trim($k) ] = trim($v);
 			}
 		}
-		
+
 		return $tab;
 	}
 	public function implodeGetParams()
 	{
 		$str = '';
-		
+
 		if( is_array($this->get_params) && count($this->get_params) ) {
 			foreach( $this->get_params as $k=>$v ) {
 				$str .= $k.'='.$v.'&';
@@ -458,8 +457,8 @@ class HttpRequest
 
 		return $str;
 	}
-	
-	
+
+
 	public function getPostTable()
 	{
 		return $this->post_params;
@@ -504,11 +503,11 @@ class HttpRequest
 	{
 		$tab = [];
 		$post = trim( $post );
-		
+
 		if( strlen($post) )
 		{
 			$t_params = explode( '&', $post );
-			
+
 			foreach( $t_params as $p ) {
 				$tmp = explode( '=', $p );
 				$k = $tmp[0];
@@ -516,13 +515,13 @@ class HttpRequest
 				$tab[ trim($k) ] = trim($v);
 			}
 		}
-		
+
 		return $tab;
 	}
 	public function implodePostParams()
 	{
 		$str = '';
-		
+
 		if( is_array($this->post_params) && count($this->post_params) ) {
 			foreach( $this->post_params as $k=>$v ) {
 				$str .= $k.'='.$v.'&';
@@ -532,12 +531,12 @@ class HttpRequest
 
 		return $str;
 	}
-	
-	
+
+
 	public function request()
 	{
 		$surplace = array();
-		
+
 		$c = curl_init();
 		curl_setopt( $c, CURLOPT_CUSTOMREQUEST, $this->method );
 		curl_setopt( $c, CURLOPT_URL, $this->getFullUrl() );
@@ -547,6 +546,7 @@ class HttpRequest
 			curl_setopt( $c, CURLOPT_PORT, $this->port );
 		}
 		curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $c, CURLOPT_SSL_VERIFYHOST, false );
 		//curl_setopt( $c, CURLOPT_NOBODY, true );
 		//curl_setopt($c, CURLOPT_PROXY, '127.0.0.1:9050' );
 		//curl_setopt($c, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5 );
@@ -571,7 +571,7 @@ class HttpRequest
 		}
 		curl_setopt( $c, CURLOPT_HTTPHEADER, array_merge($this->getSpecialHeaders(),$surplace) );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-		
+
 		$this->result = curl_exec( $c );
 		$this->result_info = curl_getinfo( $c );
 		$this->result_code = $this->result_info['http_code'];
@@ -593,7 +593,7 @@ class HttpRequest
 		if( !$this->setRequestFile($file) ) {
 			return false;
 		}
-		
+
 		$request = trim( file_get_contents($file) ); // the full request
 		$request = str_replace( "\r", "", $request );
 		$t_request = explode( "\n\n", $request ); // separate headers and post parameters
@@ -643,22 +643,22 @@ class HttpRequest
 					break;
 			}
 		}
-		
+
 		$params = ''; // post parameters
 		if( count($t_request) ) {
 			$this->setPostParams( $this->explodePostParams($t_request[0]) );
 		}
-		
+
 		if( isset($cookies) ) {
 			$this->setCookies( $cookies );
 		}
-		
+
 		$this->setUrl( $url );
 		$this->setHost( $host );
 		$this->setMethod( $method );
 		$this->setHttp( $http );
 		$this->setHeaders( $h_replay );
-		
+
 		return true;
 	}
 
@@ -668,7 +668,7 @@ class HttpRequest
 		$output = '';
 		$output .= $this->method.' '.$this->implodeUrl().' '.$this->http."\n";
 		$output .= 'Host: '.$this->host."\n";
-		
+
 		/*foreach( $this->headers as $k=>$h ) {
 			$output .= $k.": ".$h."\n";
 		}*/
@@ -676,12 +676,12 @@ class HttpRequest
 		if( strlen($h) ) {
 			$output .= $h."\n";
 		}
-		
+
 		$c = $this->implodeCookies();
 		if( strlen($c) ) {
 			$output .= 'Cookies: '.$c."\n\n";
 		}
-		
+
 		$output .= $this->implodePostParams();
 
 		if( $echo ) {

@@ -3,23 +3,25 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
-function __autoload( $c ) {
-	include( __DIR__.'/'.$c.'.php' );
-}
+
+spl_autoload_register(function ( $c ) {
+	include( dirname(__FILE__).'/class.'.$c.'.php' );
+});
 
 
 // parse command line
 {
 	$options = [
 		'domain:',
+		'fail:',
 		'help',
 		'ip:',
 		'port:',
 		'ssl',
+		'st:',
 		'threads:',
 		'wordlist:',
 	];
@@ -37,7 +39,7 @@ function __autoload( $c ) {
 			case 'fail':
 				$vbrute->setMaxFail( $v );
 				break;
-				
+
 			case '-h':
 			case 'help':
 				Utils::help();
@@ -46,15 +48,19 @@ function __autoload( $c ) {
 			case 'ip':
 				$vbrute->setIp( $v );
 				break;
-		
+
 			case 'ssl':
 				$vbrute->forceSsl( true );
+				break;
+
+			case 'st':
+				$vbrute->setSimilarTextConfirm( $v );
 				break;
 
 			case 'port':
 				$vbrute->setPort( $v );
 				break;
-				
+
 			case 'threads':
 				$vbrute->setMaxThreads( $v );
 				break;

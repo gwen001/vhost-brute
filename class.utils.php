@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class Utils
@@ -32,8 +31,8 @@ class Utils
 
 	public static function help( $error='' )
 	{
-		if( is_file('README.md') ) {
-			$help = file_get_contents( 'README.md' )."\n";
+		if( is_file(__DIR__.'/README.md') ) {
+			$help = file_get_contents( __DIR__.'/README.md' )."\n";
 			preg_match_all( '#```(.*)```#s', $help, $matches );
 			if( count($matches[1]) ) {
 				echo trim($matches[1][0])."\n\n";
@@ -60,14 +59,14 @@ class Utils
 		return filter_var( $str, FILTER_VALIDATE_EMAIL );
 	}
 
-	
+
 	public static function _print( $str, $color, $echo=true )
 	{
 		$str = "\033[".self::T_SHELL_COLORS[$color]."m".$str." \033[0m";
 		if( $echo ) {
 			echo $str;
 		}
-		return $str;		
+		return $str;
 	}
 	public static function _println( $str, $color, $echo=true )
 	{
@@ -78,7 +77,7 @@ class Utils
 		return $str;
 	}
 
-	
+
 	public static function _array_search( $array, $search, $ignore_case=true )
 	{
 		if( $ignore_case ) {
