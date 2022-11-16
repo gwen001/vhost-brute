@@ -1,12 +1,6 @@
 #!/usr/bin/php
 <?php
 
-/**
- * I don't believe in license
- * You can do whatever you want with this program
- */
-
-
 spl_autoload_register(function ( $c ) {
 	include( dirname(__FILE__).'/class.'.$c.'.php' );
 });

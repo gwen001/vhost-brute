@@ -1,10 +1,5 @@
 <?php
 
-/**
- * I don't believe in license
- * You can do whatever you want with this program
- */
-
 class VhostBrute
 {
 	const T_HEADER_EXCLUDE = [ 'date', 'location', 'server', 'x-connection-hash', 'x-response-time', 'x-served-by' ];
